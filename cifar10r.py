@@ -37,7 +37,8 @@ def load_cifar_r(rotation, n_examples):
 
     dataset = datasets.CIFAR10(root='./data',
                             train=False,
-                            transform=transform)
+                            transform=transform,
+                            download=True)
 
     batch_size = 100
     test_loader = DataLoader(dataset,

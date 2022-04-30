@@ -69,7 +69,11 @@ def evaluate(description):
     base_model = ResNet18()
     print('==> Loading from checkpoint..')
     checkpoint = torch.load('./cifar10_resnet18.pth')
-    base_model.load_state_dict(checkpoint['net'])
+    state_dict = checkpoint['net']
+    for key in list(state_dict.keys()):
+        new_key = key.replace("module.", "")
+        state_dict[new_key] = state_dict.pop(key)
+    base_model.load_state_dict(state_dict)
 
     if cfg.MODEL.ADAPTATION == "source":
         logger.info("test-time adaptation: NONE")

@@ -74,7 +74,7 @@ def evaluate(description):
     for key in list(state_dict.keys()):
         new_key = key.replace("module.", "")
         state_dict[new_key] = state_dict.pop(key)
-    base_model.load_state_dict(state_dict)
+    base_model.load_state_dict(state_dict).cuda()
 
     if cfg.MODEL.ADAPTATION == "source":
         logger.info("test-time adaptation: NONE")

@@ -1,7 +1,7 @@
 MODEL:
   ADAPTATION: tent
   ARCH: Standard
-  EVOLVE: false
+  EVOLVE: true
 TEST:
   BATCH_SIZE: 200
 CORRUPTION:

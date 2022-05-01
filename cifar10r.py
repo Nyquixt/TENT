@@ -86,14 +86,15 @@ def evaluate(description):
         logger.info("test-time adaptation: TENT")
         model = setup_tent(base_model)
     # evaluate on evolving rotation of image
-    for angle in range(0, 180, 10):
+    for angle in range(0, 181, 10): # 0-180 degree rotation, step of 10
         # reset adaptation for each rotation
         # note: for evaluation protocol, but not necessarily needed
-        try:
-            model.reset()
-            logger.info("resetting model")
-        except:
-            logger.warning("not resetting model")
+        if not cfg.MODEL.EVOLVE:
+            try:
+                model.reset()
+                logger.info("resetting model")
+            except:
+                logger.warning("not resetting model")
         x_test, y_test = load_cifar_r(angle, None)
         x_test, y_test = x_test.cuda(), y_test.cuda()
         acc = accuracy(model, x_test, y_test, cfg.TEST.BATCH_SIZE)

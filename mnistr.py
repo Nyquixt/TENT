@@ -10,7 +10,7 @@ import logging
 
 import tent
 import norm
-from resnet import ResNet18
+from lenet import LeNet5
 
 from conf import cfg, load_cfg_fom_args
 
@@ -29,11 +29,11 @@ def load_cifar_r(rotation, n_examples):
 
     transform = transforms.Compose([
         transforms.ToTensor(),
-        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+        transforms.Normalize((0.1307,), (0.3081,)),
         RotationTransform(angle=rotation)
     ])
 
-    dataset = datasets.CIFAR10(root='./data',
+    dataset = datasets.MNIST(root='./data',
                             train=False,
                             transform=transform,
                             download=True)
@@ -62,9 +62,9 @@ def load_cifar_r(rotation, n_examples):
 def evaluate(description):
     load_cfg_fom_args(description)
     # Load checkpoint.
-    base_model = ResNet18().cuda()
+    base_model = LeNet5().cuda()
     print('==> Loading from checkpoint..')
-    checkpoint = torch.load('./cifar10_resnet18.pth')
+    checkpoint = torch.load('./lenet5-mnist.pth')
     state_dict = checkpoint['net']
     for key in list(state_dict.keys()):
         new_key = key.replace("module.", "")

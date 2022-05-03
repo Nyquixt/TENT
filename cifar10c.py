@@ -4,14 +4,13 @@ import torch
 import torch.optim as optim
 
 from robustbench.data import load_cifar10c
-from robustbench.model_zoo.enums import ThreatModel
-from robustbench.utils import load_model
 from robustbench.utils import clean_accuracy as accuracy
 
 import tent
 import norm
 
 from conf import cfg, load_cfg_fom_args
+from resnet import ResNet18
 
 
 logger = logging.getLogger(__name__)
@@ -20,8 +19,19 @@ logger = logging.getLogger(__name__)
 def evaluate(description):
     load_cfg_fom_args(description)
     # configure model
-    base_model = load_model(cfg.MODEL.ARCH, cfg.CKPT_DIR,
-                       cfg.CORRUPTION.DATASET, ThreatModel.corruptions).cuda()
+    # base_model = load_model(cfg.MODEL.ARCH, cfg.CKPT_DIR,
+    #                    cfg.CORRUPTION.DATASET, ThreatModel.corruptions).cuda()
+    
+    # Load checkpoint.
+    base_model = ResNet18().cuda()
+    print('==> Loading from checkpoint..')
+    checkpoint = torch.load('./cifar10_resnet18.pth')
+    state_dict = checkpoint['net']
+    for key in list(state_dict.keys()):
+        new_key = key.replace("module.", "")
+        state_dict[new_key] = state_dict.pop(key)
+    base_model.load_state_dict(state_dict)
+
     if cfg.MODEL.ADAPTATION == "source":
         logger.info("test-time adaptation: NONE")
         model = setup_source(base_model)
